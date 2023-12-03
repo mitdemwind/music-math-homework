@@ -17,6 +17,7 @@ class Individual:
           a 2d array which has the following structure:
           Each row is a measure, consisting of some notes
           the notes are represented by a pitch number (C4 as 60)
+          the number for extending last note is defined as EXTEND
           a measure consists of 4 or 8 notes according to the beat
 
          - fitfunc:
