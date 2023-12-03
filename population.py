@@ -86,7 +86,7 @@ class Population:
         self._members = []
         self.fitfunc = fitfunc
         self.mutate_rate = mutate_rate
-        self._adaptibilty = np.ndarray(map(fitfunc, self.members))
+        self._adaptibilty = np.array(list(map(fitfunc, self.members)))
 
     def initialize(self, num: int) -> None:
         """
@@ -142,13 +142,13 @@ class Population:
         """
         self.cross()
         self.mutate()
-        self._adaptibilty = list(map(fitfunc, self._members))
+        self._adaptibilty = np.array(list(map(fitfunc, self._members)))
 
 
 # some simple tests
 # you can modify this part for debugging
 if __name__ == '__main__':
-    a = Individual(np.array([[3, 0], [1, 1], [2, 2]]), lambda x: x[0][0], 0.1)
+    a = Individual(np.array([[3, 0], [1, 1], [2, 2]]), lambda x: x[0][0])
     print(len(a), a.adaptibilty())
-    a._modifyRandom()
+    a._modify_random_note()
     print(a.melody)
