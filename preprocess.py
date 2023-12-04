@@ -20,8 +20,21 @@ class Converter:
         """
         Convert the given file to an numpy array
         """
-        # TODO
-        pass
+        stream = ms.converter.parse(file)
+        array = np.array([], dtype=np.int)
+        for note in stream.flat.notes:
+            pitch = note.pitch.midi
+            duration = note.duration.quarterLength
+            duration = (duration * 2) - 1
+            array = np.append(array, pitch)
+            for dur in range(duration):
+                array = np.append(array, EXTEND)
+        array = np.reshape(array, (-1, 8))
+        """
+        the array will be like:([60,-1,-1,-1,72,-1,-1,-1],
+                                [56,-1,58,-1,59,68,60,60],...)
+        """
+        return array
 
     def individual2music(self, result: Individual, file_path: str) -> None:
         """
