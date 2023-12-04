@@ -64,5 +64,8 @@ class Converter:
         Read the files in <file_paths> and generate a Population
         consisting of them
         """
-        # TODO
-        pass
+        population = Population(fitfunc, mutate_rate)
+        for file in file_paths:
+            array = self.music2arrays(file)
+            population._members.append(array)
+        return population
