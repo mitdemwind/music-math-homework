@@ -40,8 +40,24 @@ class Converter:
         """
         Convert <result> to a music file, and save it in <file_path>
         """
-        # TODO
-        pass
+        melody = result.melody
+        melody = np.reshape((-1,), order='C')
+        stream = ms.stream.Stream()
+        stream.metadata = ms.metadata.Metadata()
+        stream.metadata.title = 'Test'
+        stream.metadata.composer = 'None'
+        stream.append(ms.meter.TimeSignature('4/4'))
+        stream.append(ms.key.Key('C'))
+        for data in melody:
+            if data == EXTEND:
+                stream[-1].duration.quarterLength += 0.5
+            else:  # add a new note
+                note = ms.note.Note(data)
+                note.duration.quarterLength = 0.5
+                note.volume.velocity = 64  # from 0 to 127
+                note.activeSite.instrument.midiProgram = 0  # 0 means piano
+                stream.append(note)
+        stream.write(file_path)
 
     def generate_population(self, file_paths: list) -> Population:
         """
