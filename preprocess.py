@@ -65,7 +65,10 @@ class Converter:
         consisting of them
         """
         population = Population(fitfunc, mutate_rate)
+        #
+        # need to implement fitfunc and mutate_rate later
+        #
         for file in file_paths:
             array = self.music2arrays(file)
-            population._members.append(array)
+            population.append(Individual(array, fitfunc))
         return population

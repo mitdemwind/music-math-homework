@@ -10,7 +10,7 @@ class Individual:
     Individual music fragments
     """
 
-    def __init__(self, melody: np.ndarray, fitfunc):
+    def __init__(self, melody: np.ndarray):
         """
         Parameters:
          - melody:
@@ -19,9 +19,6 @@ class Individual:
           the notes are represented by a pitch number (C4 as 60)
           the number for extending last note is defined as EXTEND
           a measure consists of 4 or 8 notes according to the beat
-
-         - fitfunc:
-          the function used to calculate adaptibilty score
         """
         try:
             self.melody = np.array(melody)
@@ -29,7 +26,6 @@ class Individual:
             print("Error when casting melody to numpy array")
             print("==========")
             raise e
-        self.fitfunc = fitfunc
 
     def __len__(self):
         """ return the number of measures contained in this fragment """
@@ -44,11 +40,11 @@ class Individual:
     def shape(self) -> tuple:
         return self.melody.shape
 
-    def adaptibilty(self) -> float:
+    def adaptibilty(self, func: callable) -> float:
         """
-        Calculate the fitness score
+        Calculate the adaptibilty score using the given function
         """
-        return self.fitfunc(self.melody)
+        return func(self.melody)
 
     def mutate(self) -> None:
         """
@@ -82,11 +78,36 @@ class Population:
     Population of music fragments to apply genetic algorithm
     """
 
-    def __init__(self, fitfunc, mutate_rate: float):
-        self._members = []
+    def __init__(self,
+            members: list[Individual],
+            fitfunc: callable,
+            mutate_rate: float
+            ):
+        """
+        Parameters:
+         - members:
+          A list of individuals that contain music fragments
+         - fitfunc:
+          A function calculating adaptibilty of Individuals
+         - mutate_rate:
+          The probability of mutation in genetic algorithm
+        """
+        self._members = members
         self.fitfunc = fitfunc
         self.mutate_rate = mutate_rate
-        self._adaptibilty = np.array(list(map(fitfunc, self.members)))
+        self._adaptibilty = np.array(list(map(fitfunc, self._members)))
+
+    def append(self, member: Individual):
+        self._members.append(member)
+        self._adaptibilty = np.append(self._adaptibilty, fitfunc(member), axis=0);
+
+    def set_members(self, members: list[Individual]):
+        self._members = members
+        self._adaptibilty = np.array(list(map(fitfunc, members)))
+
+    @property
+    def members(self):
+        return self._members
 
     def initialize(self, num: int) -> None:
         """
@@ -148,7 +169,7 @@ class Population:
 # some simple tests
 # you can modify this part for debugging
 if __name__ == '__main__':
-    a = Individual(np.array([[3, 0], [1, 1], [2, 2]]), lambda x: x[0][0])
-    print(len(a), a.adaptibilty())
+    a = Individual(np.array([[3, 0], [1, 1], [2, 2]]))
+    print(len(a))
     a._modify_random_note()
     print(a.melody)
