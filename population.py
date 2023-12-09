@@ -95,15 +95,15 @@ class Population:
         self._members = members
         self.fitfunc = fitfunc
         self.mutate_rate = mutate_rate
-        self._adaptibilty = np.array(list(map(fitfunc, self._members)))
+        self._adaptibilty = np.array(list(map(self.fitfunc, self._members)))
 
     def append(self, member: Individual):
         self._members.append(member)
-        self._adaptibilty = np.append(self._adaptibilty, fitfunc(member), axis=0);
+        self._adaptibilty = np.append(self._adaptibilty, self.fitfunc(member), axis=0);
 
     def set_members(self, members: list[Individual]):
         self._members = members
-        self._adaptibilty = np.array(list(map(fitfunc, members)))
+        self._adaptibilty = np.array(list(map(self.fitfunc, members)))
 
     @property
     def members(self):
@@ -163,7 +163,7 @@ class Population:
         """
         self.cross()
         self.mutate()
-        self._adaptibilty = np.array(list(map(fitfunc, self._members)))
+        self._adaptibilty = np.array(list(map(self.fitfunc, self._members)))
 
 
 # some simple tests
@@ -173,3 +173,6 @@ if __name__ == '__main__':
     print(len(a))
     a._modify_random_note()
     print(a.melody)
+    from fitfunction import FitFunction
+    func = FitFunction()
+    print(func(a.melody))
