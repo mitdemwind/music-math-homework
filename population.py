@@ -56,8 +56,13 @@ class Individual:
 
          Write these in different functions below
         """
-        # TODO
-        pass
+        mutation_prob = np.random.rand()
+        if mutation_prob < 0.33:
+            self._modify_random_note()
+        elif 0.33 <= mutation_prob < 0.67:
+            self._change_rhythm()
+        else:
+            self._other_operations()
 
     def _modify_random_note(self):
         """ modify a random note in the melody by some offsets """
@@ -65,12 +70,20 @@ class Individual:
         self.melody[idx] += np.random.choice([-7,-5,-4,-2,2,4,5,7], 1)
         # maybe change this a little?
 
-    # TODO
     def _change_rhythm(self):
-        pass
+        idx = tuple(np.random.randint(self.shape))
+        self.melody[idx] = EXTEND
+
     def _other_operations(self):
-        # change this method's name or add new methods
-        pass
+        """ Perform other types of mutations or operations on the melody """
+        operation_prob = np.random.rand()
+
+        if operation_prob < 0.33:
+            self._modify_random_note()
+        elif 0.33 <= operation_prob < 0.67:
+            self._change_rhythm()
+        else:
+            self._transpose_random_measure()
 
 
 class Population:
@@ -113,8 +126,16 @@ class Population:
         """
         Ramdomly construct <num> of individuals and initialize the population
         """
-        # TODO
-        pass
+        for _ in range(num):
+            # Randomly generate a melody for a new individual
+            melody_length = np.random.choice([4, 8])  # Randomly choose a measure length (4 or 8)
+            MIN_PITCH = 60
+            MAX_PITCH = 72
+            random_melody = np.random.randint(MIN_PITCH, MAX_PITCH + 1, size=(1, melody_length))
+
+            # Create a new Individual and add it to the population
+            new_individual = Individual(random_melody)
+            self.append(new_individual)
 
     def __len__(self):
         return len(self._members)
@@ -132,7 +153,7 @@ class Population:
         """
         Select <number> of individuals with highest adaptibilty
         """
-        idx = self._adaptibilty.argsort()[-numbers:]
+        idx = self._adaptibilty.argsort()[-number:]
         return [self._members[i] for i in idx]
 
     @staticmethod
@@ -140,22 +161,42 @@ class Population:
         """
         Generate children using two individuals
         """
-        # TODO
-        pass
+        # Select a random crossover point
+        crossover_point = np.random.randint(min(p1.shape[1], p2.shape[1]))
+
+        # Create a new melody by combining genetic material from both parents
+        child_melody = np.hstack([p1.melody[:, :crossover_point], p2.melody[:, crossover_point:]])
+
+        # Create a new Individual using the combined melody
+        child = Individual(child_melody)
+
 
     def cross(self) -> None:
         """
         Generate the next generation randomly
         """
-        # TODO
-        pass
+        new_generation = []
+        for _ in range(len(self._members) // 2):
+            # Randomly select two parents
+            parent1 = np.random.choice(self._members)
+            parent2 = np.random.choice(self._members)
+            # Generate children using crossover
+            child1 = self._cross(parent1, parent2)
+            child2 = self._cross(parent1, parent2)
+            new_generation.extend([child1, child2])
+
+        # Update the population with the new generation
+        self._members = new_generation
+        self._adaptibilty = np.array(list(map(self.fitfunc, self._members)))
 
     def mutate(self) -> None:
         """
         Apply mutation on some individuals
         """
-        # TODO
-        pass
+        mutation_indices = np.random.rand(len(self._members)) < self.mutate_rate
+        for i, mutate_flag in enumerate(mutation_indices):
+            if mutate_flag:
+                self._members[i].mutate()
 
     def update(self) -> None:
         """
@@ -175,4 +216,4 @@ if __name__ == '__main__':
     print(a.melody)
     from fitfunction import FitFunction
     func = FitFunction()
-    print(func(a.melody))
+    print(func(a))
