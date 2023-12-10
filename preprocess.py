@@ -67,6 +67,10 @@ class Converter:
         m.keySignature = ms.key.KeySignature(0)
         for data in melody:
             if data in EXTEND:
+                # TODO: Here I add a rest to the measure if the
+                # beginning element is EXTEND. Need to change it
+                # to the last note of previous measure. Maybe do
+                # this in individual2music method or in a new method
                 if len(m) == 0:
                     m.append(ms.note.Rest('eighth'))
                     continue
