@@ -34,7 +34,7 @@ class Converter:
 
             array = np.append(array, pitch)
             for dur in range(duration):
-                array = np.append(array, EXTEND)
+                array = np.append(array, EXTEND[0])
 
         array = np.reshape(array, (-1, 8))
         # the array will be like:[[60,-1,-1,-1,72,-1,-1,-1],
@@ -44,27 +44,46 @@ class Converter:
     def individual2music(self, result: Individual, file_path: str) -> None:
         """
         Convert <result> to a music file, and save it in <file_path>
+        If file_path is an empty string, then show it instead of save it.
         """
         melody = result.melody
-        melody = melody.reshape((-1,), order='C')
+        measures = list(map(self._to_measure, melody))
 
-        stream = ms.stream.Stream()
+        stream = ms.stream.Stream(measures)
         stream.metadata = ms.metadata.Metadata()
         stream.metadata.title = 'Test'
         stream.metadata.composer = 'None'
-        stream.append(ms.meter.TimeSignature('4/4'))
-        stream.append(ms.key.Key('C'))
+        stream.insert(0, ms.meter.TimeSignature('4/4'))
+        stream.insert(0, ms.key.Key('C'))
 
+        if file_path == '':
+            stream.show()
+        else:
+            stream.write('xml', DATAPATH + file_path)
+
+    def _to_measure(self, melody: np.ndarray) -> ms.stream.Measure:
+        """ Convert a 1d array to a measure in key of C """
+        m = ms.stream.Measure()
+        m.keySignature = ms.key.KeySignature(0)
         for data in melody:
-            if data == EXTEND:
-                stream[-1].duration.quarterLength += 0.5
+            if data in EXTEND:
+                m[-1].duration.quarterLength += 0.5
             else:  # add a new note
                 note = ms.note.Note(data)
                 note.duration.quarterLength = 0.5
-                note.volume.velocity = 64  # from 0 to 127
+                # note.volume.velocity = 64  # from 0 to 127
                 # note.activeSite.instrument.midiProgram = 0  # 0 means piano
-                stream.append(note)
-        stream.write('xml', DATAPATH + file_path)
+                m.append(note)
+        return m
+
+    def array2music(self, arr: np.ndarray, file_path: str) -> None:
+        """
+        Convert <arr> to a music file, and save it in <file_path>
+        If file_path is an empty string, then show it instead of save it.
+
+        Note that <arr> can be either array of strings or array of numbers.
+        """
+        self.individual2music(Individual(arr), file_path)
 
     def generate_population(self, file_paths: list[str]) -> Population:
         """
@@ -87,9 +106,23 @@ if __name__ == '__main__':
         os.mkdir('data/')
     converter = Converter()
     test_melody = np.array([
-            [60, 62, 64, 60, 60, 62, 64, 60],
-            [64, 65, 67, -1, 64, 65, 67, -1]])
+            ['C', '', '', 'D', 'E', '', '', 'C'],
+            ['E', '', 'C', '', 'E', '', '', ''],
+            ['D', '', '', 'E', 'F', 'F', 'E', 'D'],
+            ['F', '', '', '', '', '', '', ''],
+            ['E', '', '', 'F', 'G', '', '', 'E'],
+            ['G', '', 'E', '', 'G', '', '', ''],
+            ['F', '', '', 'G', 'A', 'A', 'G', 'F'],
+            ['A', '', '', '', '', '', '', ''],
+            ['G', '', '', 'C', 'D', 'E', 'F', 'G'],
+            ['A', '', '', '', '', '', '', ''],
+            ['A', '', '', 'D', 'E', 'F', 'G', 'A'],
+            ['B', '', '', '', '', '', '', ''],
+            ['B', '', '', 'E', 'F', 'G', 'A', 'B'],
+            ['C5', '', '', '', '', '', 'C5', 'B'],
+            ['A', '', 'F', '', 'B', '', 'G', ''],
+            ['C5', '', 'G', '', 'E', '', 'D', '']])
     test_ind = Individual(test_melody)
     converter.individual2music(test_ind, 'test.xml')
     print(converter.music2arrays('test.xml'))
-    print(converter.generate_population(['test.xml']))
+    print(converter.generate_population(['test.xml']).adaptibilty)

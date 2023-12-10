@@ -1,8 +1,9 @@
 DATAPATH = './data/'
 
 # the pitch number assigned for extending the last note
-EXTEND = -1
+EXTEND = [-1, '']
 
+##### below are unused yet
 # the offset of major and minor scale
 MAJSCALE = [0, 2, 4, 5, 7, 9, 11]
 MINSCALE = [0, 2, 3, 5, 7, 8, 10]
