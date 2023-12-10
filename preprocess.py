@@ -67,6 +67,9 @@ class Converter:
         m.keySignature = ms.key.KeySignature(0)
         for data in melody:
             if data in EXTEND:
+                if len(m) == 0:
+                    m.append(ms.note.Rest('eighth'))
+                    continue
                 m[-1].duration.quarterLength += 0.5
             else:  # add a new note
                 note = ms.note.Note(data)
@@ -124,5 +127,10 @@ if __name__ == '__main__':
             ['C5', '', 'G', '', 'E', '', 'D', '']])
     test_ind = Individual(test_melody)
     converter.individual2music(test_ind, 'test.xml')
-    print(converter.music2arrays('test.xml'))
-    print(converter.generate_population(['test.xml']).adaptibilty)
+    test_ind = Individual(converter.music2arrays('test.xml'))
+    test_ind.mutate(1)
+    test_ind.mutate(2)
+    test_ind.mutate(2)
+    print(test_ind.melody)
+    converter.individual2music(test_ind, '')
+    # print(converter.generate_population(['test.xml']).adaptibilty)

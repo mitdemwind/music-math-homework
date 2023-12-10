@@ -1,5 +1,6 @@
 import numpy as np
 from constants import *
+from utils import *
 
 # write helper functions freely when needed
 # remember to name them as _example_method()
@@ -46,28 +47,65 @@ class Individual:
         """
         return func(self.melody)
 
-    def mutate(self) -> None:
+    def mutate(self, op: int) -> None:
         """
         Apply mutation on the individual
-        3 kinds of mutation:
-         - change a single note
-         - change of rhythm
-         - inversion, retrograde, transition
+        Three kinds of mutation:
+         1. change a note's pitch
+         2. change a note's length
+         3. inversion, retrograde, transition
 
          Write these in different functions below
         """
-        # TODO
-        pass
+        if op == 1:
+            self._modify_random_note()
+            return
+        if op == 2:
+            self._change_rhythm()
+            return
+        if op == 3:
+            self._other_operations()
+            return
+        print("Invalid option for Individual.mutate")
 
-    def _modify_random_note(self):
-        """ modify a random note in the melody by some offsets """
+    def _modify_random_note(self) -> None:
+        """ Modify a random note in the melody by at most 2 scales """
         idx = tuple(np.random.randint(self.shape))
-        self.melody[idx] += np.random.choice([-7,-5,-4,-2,2,4,5,7], 1)
-        # maybe change this a little?
+        while(self.melody[idx] == -1):
+            idx = tuple(np.random.randint(self.shape))
+
+        offset = np.random.randint(-2, 3)
+        while(offset == 0):
+            offset = np.random.randint(-2, 3)
+        self.melody[idx] = lift(self.melody[idx], offset)
+
+    def _change_rhythm(self) -> None:
+        """
+        Randomly choose a note, and make it longer or
+        make the previous note shorter
+        """
+        idx = np.random.randint(self.melody.size)
+        while(self.melody.ravel()[idx] == -1):
+            idx = np.random.randint(self.melody.size)
+        temp = self.melody.ravel()[idx]
+
+        choices = []
+        if idx != 0:
+            choices.append(1)
+        if idx != self.melody.size - 1:
+            choices.append(2)
+        c = np.random.choice(choices)
+
+        if c == 1:
+            self.melody.ravel()[idx] = -1
+            self.melody.ravel()[idx - 1] = temp
+            return
+        if c == 2:
+            self.melody.ravel()[idx] = -1
+            self.melody.ravel()[idx + 1] = temp
+            return
 
     # TODO
-    def _change_rhythm(self):
-        pass
     def _other_operations(self):
         # change this method's name or add new methods
         pass
