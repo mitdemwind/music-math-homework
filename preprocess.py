@@ -100,12 +100,11 @@ class Converter:
         if file_paths == []:
             raise Exception("Cannot convert empty file list to population")
 
-        # TODO: need to implement fitfunc and mutate_rate later
         members = []
         for file in file_paths:
             array = self.music2arrays(file)
             members.append(Individual(array))
-        population = Population(members, FitFunction(), 0.05)
+        population = Population(members, FitFunction(), MUTATE_RATE)
         return population
 
 if __name__ == '__main__':

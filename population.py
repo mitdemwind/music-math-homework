@@ -69,12 +69,10 @@ class Individual:
     def _modify_random_note(self) -> None:
         """ Modify a random note in the melody by at most 2 scales """
         idx = tuple(np.random.randint(self.shape))
-        while(self.melody[idx] == -1):
+        while(self.melody[idx] in EXTEND):
             idx = tuple(np.random.randint(self.shape))
 
-        offset = np.random.randint(-2, 3)
-        while(offset == 0):
-            offset = np.random.randint(-2, 3)
+        offset = np.random.choice([-2, -1, 1, 2])
         self.melody[idx] = lift(self.melody[idx], offset)
 
     def _change_rhythm(self) -> None:
@@ -83,11 +81,11 @@ class Individual:
         make the previous note shorter
         """
         idx = np.random.randint(self.melody.size)
-        while(self.melody.ravel()[idx] == -1):
+        while(self.melody.ravel()[idx] in EXTEND):
             idx = np.random.randint(self.melody.size)
         temp = self.melody.ravel()[idx]
 
-        # make it shorter if possible
+        # make this part of code shorter if possible
         choices = []
         if idx != 0:
             choices.append(1)
@@ -96,16 +94,17 @@ class Individual:
         c = np.random.choice(choices)
 
         if c == 1:
-            self.melody.ravel()[idx] = -1
+            self.melody.ravel()[idx] = EXTEND[0]
             self.melody.ravel()[idx - 1] = temp
             return
         if c == 2:
-            self.melody.ravel()[idx] = -1
+            self.melody.ravel()[idx] = EXTEND[0]
             self.melody.ravel()[idx + 1] = temp
             return
 
     def _other_operations(self):
         """ Perform other types of mutations or operations on the melody """
+        # TODO
         operation_prob = np.random.rand()
 
         if operation_prob < 0.33:
@@ -194,13 +193,15 @@ class Population:
         Generate children using two individuals
         """
         # Select a random crossover point
-        crossover_point = np.random.randint(min(p1.shape[1], p2.shape[1]))
+        crossover_point = np.random.randint(1, min(len(p1), len(p2)))
 
         # Create a new melody by combining genetic material from both parents
-        child_melody = np.hstack([p1.melody[:, :crossover_point], p2.melody[:, crossover_point:]])
+        child_melody = np.vstack([p1.melody[:crossover_point, :],
+                                p2.melody[crossover_point:, :]])
 
         # Create a new Individual using the combined melody
         child = Individual(child_melody)
+        return child
 
 
     def cross(self) -> None:
@@ -208,18 +209,18 @@ class Population:
         Generate the next generation randomly
         """
         new_generation = []
-        for _ in range(len(self._members) // 2):
+        # select half of members with higher adaptability
+        parents = self._select_best(len(self) // 2)
+        for _ in range(len(self)):
             # Randomly select two parents
-            parent1 = np.random.choice(self._members)
-            parent2 = np.random.choice(self._members)
+            parent1 = np.random.choice(parents)
+            parent2 = np.random.choice(parents)
             # Generate children using crossover
-            child1 = self._cross(parent1, parent2)
-            child2 = self._cross(parent1, parent2)
-            new_generation.extend([child1, child2])
+            child = self._cross(parent1, parent2)
+            new_generation.append(child)
 
         # Update the population with the new generation
-        self._members = new_generation
-        self._adaptibilty = np.array(list(map(self.fitfunc, self._members)))
+        self.set_members(new_generation)
 
     def mutate(self) -> None:
         """
@@ -229,6 +230,7 @@ class Population:
         for i, mutate_flag in enumerate(mutation_indices):
             if mutate_flag:
                 self._members[i].mutate()
+                self._adaptibilty[i] = self.fitfunc(self._members[i])
 
     def update(self) -> None:
         """
@@ -236,16 +238,15 @@ class Population:
         """
         self.cross()
         self.mutate()
-        self._adaptibilty = np.array(list(map(self.fitfunc, self._members)))
 
 
 # some simple tests
 # you can modify this part for debugging
 if __name__ == '__main__':
-    a = Individual(np.array([[3, 0], [1, 1], [2, 2]]))
-    print(len(a))
-    a._modify_random_note()
-    print(a.melody)
+    a = Individual(np.array([[4, 0], [2, 5], [2, 2]]))
+    b = Individual(np.array([[124, 24], [40, 213], [235, 34]]))
+    assert len(a) == 3
+
     from fitfunction import FitFunction
-    func = FitFunction()
-    print(func(a))
+    p = Population([], FitFunction(), 0)
+    print(p._cross(a, b).melody)

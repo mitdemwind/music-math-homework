@@ -2,6 +2,7 @@ import numpy as np
 from population import Individual
 from constants import *
 
+# TODO
 class FitFunction():
     def __init__(self):
         pass
