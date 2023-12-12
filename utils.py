@@ -1,9 +1,8 @@
-"""
-Write static helper functions here
-"""
+# Write static helper functions here
 import numpy as np
 from constants import *
 
+pitchname = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
 def to_pitchclass(midi_number: int) -> tuple[int]:
     """
     Convert a midi numder into (pitchClass, octaveNumber)
@@ -28,3 +27,14 @@ def lift(note: int, distance: int) -> int:
     octave += pc // 7
     pc %= 7
     return to_note(pc, octave)
+
+def to_note_str(note: int) -> str:
+    """
+    Convert a pitch number to the pitch name
+    e.g. to_note_str(60) == 'C4'
+    """
+    if note == EXTEND[0]:
+        return EXTEND[1]
+    pc, octave = to_pitchclass(note)
+    return pitchname[pc] + str(octave)
+
