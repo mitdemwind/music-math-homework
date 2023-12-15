@@ -25,7 +25,7 @@ class FitFunction():
         """ Returns the duration of each note in the music """
         dur_series = []
         for note in music.melody.ravel():
-            if note in EXTEND:
+            if note not in EXTEND:
                 dur_series.append(current_dur)
                 current_dur = 0
             else:
@@ -35,7 +35,7 @@ class FitFunction():
         return np.array(dur_series)
 
     @staticmethod
-    def get_pitch_series(music.Individual) -> np.ndarray:
+    def get_pitch_series(music: Individual) -> np.ndarray:
         """ Returns the pitch number of each note """
         mask = (music.melody != -1)
         return music.melody[mask]
