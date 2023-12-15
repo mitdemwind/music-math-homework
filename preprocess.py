@@ -94,7 +94,7 @@ class Converter:
         for file in file_paths:
             array = self.music2arrays(file)
             members.append(Individual(array))
-        population = Population(members, FitFunction(), MUTATE_RATE)
+        population = Population(members, FitFunction().final_evaluate, MUTATE_RATE)
         return population
 
 if __name__ == '__main__':
