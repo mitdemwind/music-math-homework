@@ -70,7 +70,7 @@ def generate_melody(start, r1, r2):
         nl.append(new)
         if i > 1:
             nl.extend([-1] * (i-1))
-    print(nl)
+    # print(nl)
     nl = list(map(to_pitch, nl))
     return nl, new
 

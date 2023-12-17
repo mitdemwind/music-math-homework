@@ -52,13 +52,12 @@ class Converter:
             melody = map(to_note_str, melody)
 
         stream = ms.stream.Stream()
-        stream.metadata = ms.metadata.Metadata()
-        stream.metadata.title = 'Test'
-        stream.insert(0, ms.meter.TimeSignature('4/4'))
-        stream.insert(0, ms.key.Key('C'))
 
         for data in melody:
             if data in EXTEND:
+                if len(stream) == 0:
+                    stream.append(ms.note.Rest('eighth'))
+                    continue
                 stream[-1].duration.quarterLength += 0.5
             else:  # add a new note
                 note = ms.note.Note(data)
@@ -66,6 +65,11 @@ class Converter:
                 # note.volume.velocity = 64  # from 0 to 127
                 # note.activeSite.instrument.midiProgram = 0  # 0 means piano
                 stream.append(note)
+
+        stream.metadata = ms.metadata.Metadata()
+        stream.metadata.title = 'Test'
+        stream.insert(0, ms.meter.TimeSignature('4/4'))
+        stream.insert(0, ms.key.Key('C'))
         stream.makeNotation(inPlace=True)
 
         if file_path == '':

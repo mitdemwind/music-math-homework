@@ -248,5 +248,5 @@ if __name__ == '__main__':
     assert len(a) == 3
 
     from fitfunction import FitFunction
-    p = Population([], FitFunction(), 0)
+    p = Population([a, b], FitFunction(), 0)
     print(p._cross(a, b).melody)

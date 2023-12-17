@@ -91,3 +91,11 @@ melody_10 = np.array([
         ['B', '', 'C5', 'D5', '', '', 'F5', ''],
         ['E5', '', '', '', '', '', '', '']])
 
+if __name__ == '__main__':
+    from preprocess import Converter
+    converter = Converter()
+    mlist = [melody_1, melody_2, melody_3, melody_4, melody_5, melody_6,
+            melody_7, melody_8, melody_9, melody_10]
+
+    for i, melody in enumerate(mlist):
+        converter.array2music(melody, 'song_' + str(i))
