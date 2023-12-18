@@ -22,19 +22,22 @@ def bg():
     m1.keySignature = ms.key.Key('C')
     m1.append(ms.note.Note('F2', type='quarter'))
     m1.append(ms.note.Note('C3', type='quarter'))
-    m1.append(ms.note.Note('F3', type='half'))
+    m1.append(ms.note.Note('F3', type='quarter'))
+    m1.append(ms.note.Note('C3', type='quarter'))
 
     m2 = ms.stream.Measure()
     m2.keySignature = ms.key.Key('C')
     m2.append(ms.note.Note('G2', type='quarter'))
     m2.append(ms.note.Note('D3', type='quarter'))
-    m2.append(ms.note.Note('G3', type='half'))
+    m2.append(ms.note.Note('G3', type='quarter'))
+    m2.append(ms.note.Note('D3', type='quarter'))
 
     m3 = ms.stream.Measure()
     m3.keySignature = ms.key.Key('C')
     m3.append(ms.note.Note('A2', type='quarter'))
     m3.append(ms.note.Note('E3', type='quarter'))
-    m3.append(ms.note.Note('A3', type='half'))
+    m3.append(ms.note.Note('A3', type='quarter'))
+    m3.append(ms.note.Note('E3', type='quarter'))
 
     m4 = ms.stream.Measure()
     m4.keySignature = ms.key.Key('C')
@@ -51,9 +54,9 @@ def to_pitch(note: int) -> str:
 # C4 is 20
 
 def update(note: int) -> int:
-    if note < 20:
+    if note < 21:
         return note + random.randint(0, 3)
-    if note > 28:
+    if note > 27:
         return note + random.randint(-2, 1)
     return note + random.randint(-2, 3)
 
@@ -103,7 +106,10 @@ def gen_fg():
             nl, start = generate_melody(start, r3, r4)
         ret.append(nl)
     return list(map(to_measure, ret))
-fg = ms.stream.Part(gen_fg())
 
-sss = ms.stream.Score([fg, bgmusic])
-sss.show()
+for i in range(20):
+    fg = ms.stream.Part(gen_fg())
+    fg.write('xml', './data/initial_' + str(i))
+
+# sss = ms.stream.Score([fg, bgmusic])
+# sss.show()

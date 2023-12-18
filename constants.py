@@ -1,11 +1,19 @@
 DATAPATH = './data/'
-MUTATE_RATE = 0.5
+MUTATE_RATE = 0.6
 
 # the pitch number assigned for extending the last note
 EXTEND = [-1, '']
 
 # scale offset
 MAJSCALE = [0, 2, 4, 5, 7, 9, 11]
+RHYTHM = [[4],
+        [1, 3],
+        [3, 1],
+        [1, 2, 1],
+        [2, 2],
+        [1, 1, 2],
+        [2, 1, 1],
+        [1, 1, 1, 1]]
 
 # define the global key signature
 C3 = 48

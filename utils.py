@@ -6,6 +6,10 @@ from constants import *
 pitchname = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
 
 complete_pitchname = ['C','#C','D','#D','E','F','#F','G','#G','A','#A','B']
+
+adjusted = {0: 0, 1: 0, 2: 2, 3: 2, 4: 4, 5: 5, 6: 5, 7: 7,
+        8: 7, 9: 9, 10: 9, 11: 11}
+
 def to_pitchclass(midi_number: int) -> tuple[int]:
     """
     Convert a midi numder into (pitchClass, octaveNumber)
@@ -45,8 +49,11 @@ def to_note_str(note: int) -> str:
     """
     if note == EXTEND[0]:
         return EXTEND[1]
-    pc, octave = to_pitchclass(note)
+    pc, octave = to_scaleclass(note)
     return pitchname[pc] + str(octave)
+
+def fit_scale(note: int) -> int:
+    return adjusted[note % 12] + 12 * (note // 12)
 
 def distance(note1:int,note2:int)->int:
     """compute the distance(音程) between two notes"""

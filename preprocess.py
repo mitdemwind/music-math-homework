@@ -51,7 +51,7 @@ class Converter:
         if melody.dtype in [np.int32, np.int64]:
             melody = map(to_note_str, melody)
 
-        stream = ms.stream.Stream()
+        stream = ms.stream.Part()
 
         for data in melody:
             if data in EXTEND:
@@ -74,6 +74,8 @@ class Converter:
 
         if file_path == '':
             stream.show()
+        elif file_path == 'return':
+            return stream
         else:
             stream.write('xml', DATAPATH + file_path)
 

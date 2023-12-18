@@ -3,32 +3,25 @@ from population import Individual
 from constants import *
 from utils import *
 
-# TODO
 class FitFunction():
     def __init__(self):
         pass
 
     def __call__(self, music: Individual):
-        # TODO
-        return self._average_pitch_of_first_note(music)
-
-    def _average_pitch_of_first_note(self, music: Individual) -> float:
-        """
-        Calculate the average pitch of the first note in the first measure.
-        """
-        first_measure = music.melody[0]
-        first_note_pitch = first_measure[0]
-        return np.mean(first_note_pitch)
-    # need some helper functions
+        return self.final_evaluate(music)
 
     @staticmethod
     def get_duration_series(music: Individual) -> np.ndarray:
         """ Returns the duration of each note in the music """
         dur_series = []
-        current_dur=0
+        current_dur = 0
+        start = 0
         for note in music.melody.ravel():
             if note not in EXTEND:
-                dur_series.append(current_dur)
+                if start:
+                    dur_series.append(current_dur)
+                else:
+                    start = 1
                 current_dur = 1
             else:
                 current_dur += 1
@@ -47,7 +40,7 @@ class FitFunction():
         cnt = 0
         duration_list = self.get_duration_series(music)
         pitch_list = self.get_pitch_series(music)
-        for i in range(duration_list.size):
+        for i in range(pitch_list.size):
             if duration_list[i] > 2 and to_pitchclass(pitch_list[i])[0] in [3, 6]:
                 cnt += 1
         return cnt
@@ -57,7 +50,7 @@ class FitFunction():
         pitch_list = self.get_pitch_series(music)
         cnt = 0
         for i in range(pitch_list.size - 1):
-            if distance(pitch_list[i], pitch_list[i + 1] > 7):
+            if distance(pitch_list[i], pitch_list[i + 1] > 5):
                 cnt += 1
         return cnt / pitch_list.size
 

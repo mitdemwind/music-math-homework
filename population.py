@@ -57,11 +57,10 @@ class Individual:
 
          Write these in different functions below
         """
-        # TODO: need to move the probabilty to constants.py instead of hard-code it
         mutation_prob = np.random.rand()
-        if mutation_prob < 0.33:
+        if mutation_prob < 0.4:
             self._modify_random_note()
-        elif 0.33 <= mutation_prob < 0.67:
+        elif 0.4 <= mutation_prob < 0.8:
             self._change_rhythm()
         else:
             self._other_operations()
@@ -73,6 +72,10 @@ class Individual:
             idx = tuple(np.random.randint(self.shape))
 
         offset = np.random.choice([-2, -1, 1, 2])
+        if self.melody[idx] > 80:
+            offset = np.random.choice([-2, -1])
+        if self.melody[idx] < 60:
+            offset = np.random.choice([1, 2])
         self.melody[idx] = lift(self.melody[idx], offset)
 
     def _change_rhythm(self) -> None:
@@ -91,6 +94,8 @@ class Individual:
             choices.append(1)
         if idx != self.melody.size - 1:
             choices.append(2)
+            if self.melody.ravel()[idx + 1] in EXTEND:
+                choices.append(3)
         c = np.random.choice(choices)
 
         if c == 1:
@@ -101,22 +106,38 @@ class Individual:
             self.melody.ravel()[idx] = EXTEND[0]
             self.melody.ravel()[idx + 1] = temp
             return
+        if c == 3:
+            self.melody.ravel()[idx + 1] = temp
+            return
 
     def _other_operations(self):
         """ Perform other types of mutations or operations on the melody """
-        # TODO
         operation_prob = np.random.rand()
 
         if operation_prob < 0.33:
-            self._modify_random_note()
+            self._transpose()
         elif 0.33 <= operation_prob < 0.67:
-            self._change_rhythm()
+            self._inverse()
         else:
-            self._transpose_random_measure()
+            self._retrograde()
 
-    def _transpose_random_measure(self):
-        # TODO
-        pass
+    def _transpose(self):
+        m = np.random.randint(0, len(self))
+        mask = self.melody[m] != -1
+        self.melody[m][mask] += np.random.randint(-4, 5)
+        self.melody[m][mask] = np.array(list(map(fit_scale, self.melody[m][mask])))
+
+    def _retrograde(self):
+        m = np.random.randint(0, len(self))
+        mask = self.melody[m] != -1
+        self.melody[m][mask] = self.melody[m][mask][::-1]
+
+    def _inverse(self):
+        m = np.random.randint(0, len(self))
+        mask = self.melody[m] != -1
+        self.melody[m][mask] = 2 * int(self.melody[m][mask].mean()) - self.melody[m][mask]
+        self.melody[m][mask] = np.array(list(map(fit_scale, self.melody[m][mask])))
+
 
 
 class Population:
@@ -210,13 +231,13 @@ class Population:
         """
         new_generation = []
         # select half of members with higher adaptability
-        parents = self._select_best(len(self) // 2)
+        parents = self._select_best(len(self) // 3)
         for _ in range(len(self)):
             # Randomly select two parents
             parent1 = np.random.choice(parents)
             parent2 = np.random.choice(parents)
             # Generate children using crossover
-            child = self._cross(parent1, parent2)
+            child = self._cross(parent1, parent1)
             new_generation.append(child)
 
         # Update the population with the new generation
@@ -243,9 +264,11 @@ class Population:
 # some simple tests
 # you can modify this part for debugging
 if __name__ == '__main__':
-    a = Individual(np.array([[4, 0], [2, 5], [2, 2]]))
+    a = Individual(np.array([[4, 0], [2, 5], [2, -1]]))
     b = Individual(np.array([[124, 24], [40, 213], [235, 34]]))
     assert len(a) == 3
+    a._transpose()
+    print(a.melody)
 
     from fitfunction import FitFunction
     p = Population([a, b], FitFunction(), 0)

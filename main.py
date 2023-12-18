@@ -12,18 +12,14 @@ converter = Converter()
 if 'data' not in os.listdir('.'):
     os.mkdir('data/')
 
-# Example: Convert a music file to arrays and print the result
-test_melody = converter.music2arrays('test.xml')
-print("Converted Music to Arrays:")
-print(test_melody)
+initial_files = list(filter(lambda x: 'initial_' in x, os.listdir('./data')))
 
-# Example: Generate a population from a list of music files
-population = converter.generate_population(['test.xml', 'test.xml', 'test.xml', 'test.xml'])
+population = converter.generate_population(initial_files)
 print("Generated Population:")
 print(population)
 
 # Run the genetic algorithm for a certain number of generations
-num_generations = 5
+num_generations = 10
 for generation in range(num_generations):
     print(f"Generation {generation + 1}")
     best_individual = population.members[np.argmax(population.adaptibilty)]
@@ -42,4 +38,8 @@ for generation in range(num_generations):
 print("Final Population:")
 best_individual = population.members[np.argmax(population.adaptibilty)]
 print(f"Best Fitness: {population.fitfunc(best_individual)}")
-converter.individual2music(best_individual, '')
+fg = converter.individual2music(best_individual, 'return')
+
+from randmusic_5 import bgmusic
+sss = ms.stream.Score([fg, bgmusic])
+sss.show()
