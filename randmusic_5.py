@@ -8,9 +8,11 @@ SCALEn = [0, 2, 4, 7, 9]
 RHYTHM = [
         [4],
         [2, 2],
+        [2, 2],
         [1, 1, 2],
         [2, 1, 1],
         [1, 2, 1],
+        [1, 1, 1, 1],
         [1, 1, 1, 1],
         [1, 3],
         [3, 1]
@@ -22,22 +24,19 @@ def bg():
     m1.keySignature = ms.key.Key('C')
     m1.append(ms.note.Note('F2', type='quarter'))
     m1.append(ms.note.Note('C3', type='quarter'))
-    m1.append(ms.note.Note('F3', type='quarter'))
-    m1.append(ms.note.Note('C3', type='quarter'))
+    m1.append(ms.note.Note('F3', type='half'))
 
     m2 = ms.stream.Measure()
     m2.keySignature = ms.key.Key('C')
     m2.append(ms.note.Note('G2', type='quarter'))
     m2.append(ms.note.Note('D3', type='quarter'))
-    m2.append(ms.note.Note('G3', type='quarter'))
-    m2.append(ms.note.Note('D3', type='quarter'))
+    m2.append(ms.note.Note('G3', type='half'))
 
     m3 = ms.stream.Measure()
     m3.keySignature = ms.key.Key('C')
     m3.append(ms.note.Note('A2', type='quarter'))
     m3.append(ms.note.Note('E3', type='quarter'))
-    m3.append(ms.note.Note('A3', type='quarter'))
-    m3.append(ms.note.Note('E3', type='quarter'))
+    m3.append(ms.note.Note('A3', type='half'))
 
     m4 = ms.stream.Measure()
     m4.keySignature = ms.key.Key('C')

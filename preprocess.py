@@ -103,6 +103,23 @@ class Converter:
         population = Population(members, FitFunction().final_evaluate, MUTATE_RATE)
         return population
 
+    def make_chords(self, chord_list: list[int]) -> ms.stream.Part:
+        bg = ms.stream.Part()
+        bg.insert(0, ms.clef.BassClef())
+        for c in chord_list:
+            m = ms.stream.Measure()
+            if 1:
+                m.keySignature = ms.key.Key("C")
+                m.append(ms.note.Note(CHORD_STRING[c][0], type='quarter'))
+                m.append(ms.note.Note(CHORD_STRING[c][1], type='quarter'))
+                m.append(ms.note.Note(CHORD_STRING[c][2], type='quarter'))
+                m.append(ms.note.Note(CHORD_STRING[c][3], type='quarter'))
+            else:
+                m.append(ms.chord.Chord(CHORD_STRING[c], type='half'))
+                m.append(ms.chord.Chord(CHORD_STRING[c], type='half'))
+            bg.append(m)
+        return bg
+
 if __name__ == '__main__':
     if 'data' not in os.listdir('.'):
         os.mkdir('data/')
@@ -128,5 +145,10 @@ if __name__ == '__main__':
     converter.individual2music(test_ind, 'test.xml')
     test_arr = converter.music2arrays('test.xml')
     print(test_arr)
-    converter.array2music(test_arr, '')
-    print(converter.generate_population(['test.xml']).adaptibilty)
+    test_ind = Individual(test_arr)
+    ch = test_ind.chords()
+    print(ch)
+    bg = converter.make_chords(ch)
+    fg = converter.individual2music(test_ind, 'return')
+    ms.stream.Score([fg, bg]).show()
+    # print(converter.generate_population(['test.xml']).adaptibilty)

@@ -33,19 +33,8 @@ class Individual:
         return self.melody.shape[0]
 
     @property
-    def beat(self):
-        """ the beat of the music, i.e. how many notes in one measure """
-        return self.melody.shape[1]
-
-    @property
     def shape(self) -> tuple:
         return self.melody.shape
-
-    def adaptibilty(self, func: callable) -> float:
-        """
-        Calculate the adaptibilty score using the given function
-        """
-        return func(self.melody)
 
     def mutate(self) -> None:
         """
@@ -137,6 +126,15 @@ class Individual:
         mask = self.melody[m] != -1
         self.melody[m][mask] = 2 * int(self.melody[m][mask].mean()) - self.melody[m][mask]
         self.melody[m][mask] = np.array(list(map(fit_scale, self.melody[m][mask])))
+
+    def chords(self):
+        """ find suitable chords for the melody, ensures the last chord is I """
+        next_chord = 0
+        chord_list = [0]
+        for m in self.melody[-2::-1]:
+            next_chord = find_chord(m, next_chord)
+            chord_list.append(next_chord)
+        return chord_list[::-1]
 
 
 

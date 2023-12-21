@@ -41,5 +41,6 @@ print(f"Best Fitness: {population.fitfunc(best_individual)}")
 fg = converter.individual2music(best_individual, 'return')
 
 from randmusic_5 import bgmusic
+bg = converter.make_chords([3, 4, 2, 5, 1, 4, 0, 0])
 sss = ms.stream.Score([fg, bgmusic])
 sss.show()
