@@ -43,3 +43,6 @@ fg = converter.individual2music(best_individual, 'return')
 from randmusic_5 import bgmusic
 sss = ms.stream.Score([fg, bgmusic])
 sss.show()
+save = input("Save it or not:")
+if save == 'y':
+    sss.write('xml', './data/result.xml')

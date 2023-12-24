@@ -20,30 +20,30 @@ RHYTHM = [
 def bg():
     m1 = ms.stream.Measure()
     m1.keySignature = ms.key.Key('C')
-    m1.append(ms.note.Note('F2', type='quarter'))
     m1.append(ms.note.Note('C3', type='quarter'))
-    m1.append(ms.note.Note('F3', type='quarter'))
-    m1.append(ms.note.Note('C3', type='quarter'))
+    m1.append(ms.note.Note('G3', type='quarter'))
+    m1.append(ms.note.Note('C4', type='quarter'))
+    m1.append(ms.note.Note('G3', type='quarter'))
 
     m2 = ms.stream.Measure()
     m2.keySignature = ms.key.Key('C')
-    m2.append(ms.note.Note('G2', type='quarter'))
-    m2.append(ms.note.Note('D3', type='quarter'))
-    m2.append(ms.note.Note('G3', type='quarter'))
-    m2.append(ms.note.Note('D3', type='quarter'))
+    m2.append(ms.note.Note('A2', type='quarter'))
+    m2.append(ms.note.Note('E3', type='quarter'))
+    m2.append(ms.note.Note('C4', type='quarter'))
+    m2.append(ms.note.Note('E3', type='quarter'))
 
     m3 = ms.stream.Measure()
     m3.keySignature = ms.key.Key('C')
-    m3.append(ms.note.Note('A2', type='quarter'))
-    m3.append(ms.note.Note('E3', type='quarter'))
-    m3.append(ms.note.Note('A3', type='quarter'))
-    m3.append(ms.note.Note('E3', type='quarter'))
+    m3.append(ms.note.Note('F2', type='quarter'))
+    m3.append(ms.note.Note('C3', type='quarter'))
+    m3.append(ms.note.Note('F3', type='quarter'))
+    m3.append(ms.note.Note('C3', type='quarter'))
 
     m4 = ms.stream.Measure()
     m4.keySignature = ms.key.Key('C')
-    m4.append(ms.note.Note('A2', type='quarter'))
-    m4.append(ms.note.Note('E3', type='quarter'))
-    m4.append(ms.note.Note('A3', type='half'))
+    m4.append(ms.note.Note('B2', type='quarter'))
+    m4.append(ms.note.Note('D3', type='quarter'))
+    m4.append(ms.note.Note('G3', type='half'))
     return [m1, m2, m3, m4]
 
 def to_pitch(note: int) -> str:
@@ -79,6 +79,7 @@ def generate_melody(start, r1, r2):
 
 bgmusic = ms.stream.Part([*bg(), *bg()])
 bgmusic.insert(0, bass)
+bgmusic.timeSignature = ms.meter.TimeSignature('4/4')
 
 def to_measure(melody):
     stream = ms.stream.Measure()
