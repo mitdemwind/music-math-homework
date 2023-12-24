@@ -112,10 +112,10 @@ class Converter:
                 m.keySignature = ms.key.Key("C")
                 m.append(ms.note.Note(CHORD_STRING[c][0], type='quarter'))
                 m.append(ms.note.Note(CHORD_STRING[c][1], type='quarter'))
-                m.append(ms.note.Note(CHORD_STRING[c][2], type='quarter'))
-                m.append(ms.note.Note(CHORD_STRING[c][3], type='quarter'))
+                m.append(ms.note.Note(CHORD_STRING[c][2], type='half'))
             else:
-                m.append(ms.chord.Chord(CHORD_STRING[c], type='half'))
+                m.append(ms.chord.Chord(CHORD_STRING[c], type='quarter'))
+                m.append(ms.chord.Chord(CHORD_STRING[c], type='quarter'))
                 m.append(ms.chord.Chord(CHORD_STRING[c], type='half'))
             bg.append(m)
         return bg

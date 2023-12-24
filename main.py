@@ -19,19 +19,15 @@ print("Generated Population:")
 print(population)
 
 # Run the genetic algorithm for a certain number of generations
-num_generations = 10
+num_generations = 20
 for generation in range(num_generations):
     print(f"Generation {generation + 1}")
     best_individual = population.members[np.argmax(population.adaptibilty)]
 
     if best_individual is not None:
-        # print(f"Best Individual: {best_individual}")
         print(f"Best Fitness: {population.fitfunc(best_individual)}")
     else:
         print("No individuals in the population.")
-    print("")
-
-    # Update the population to the next generation
     population.update()
 
 # Print the final population information
@@ -40,7 +36,6 @@ best_individual = population.members[np.argmax(population.adaptibilty)]
 print(f"Best Fitness: {population.fitfunc(best_individual)}")
 fg = converter.individual2music(best_individual, 'return')
 
-from randmusic_5 import bgmusic
-bg = converter.make_chords([3, 4, 2, 5, 1, 4, 0, 0])
-sss = ms.stream.Score([fg, bgmusic])
+bg = converter.make_chords(fg.chords())
+sss = ms.stream.Score([fg, bg])
 sss.show()
