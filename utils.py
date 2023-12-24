@@ -64,7 +64,18 @@ def distance(note1:int,note2:int)->int:
         cnt += (level2 - level1) * 12
     return abs(cnt + name2 - name1)
 
+def find_chord(melody: np.array, next_chord: int) -> int:
+    score = np.zeros(6)
+    pc = melody[melody != -1] % 12
+    for i in range(6):
+        if next_chord in CHORD_PROG[i]:
+            score[i] += 3
+        for note in pc:
+            if note in CHORDS[i]:
+                score[i] += 1
+    max_score = np.max(score)
+    return np.random.choice(np.where(score == max_score)[0])
+
 if __name__ == '__main__':
     assert lift(60, 1) == 62
     assert lift(60, 5) == 69
-
